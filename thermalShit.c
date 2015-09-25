@@ -45,6 +45,7 @@ main(){
 		//if it's a line break, count it as a new row
 		if(bloop == '\n'){thermalParamLength++;}
 	}
+	//go back to the beginning of the file
 	fseek(tpfp, 0L, SEEK_SET);
 	while(!feof(ptfp))
 	{
