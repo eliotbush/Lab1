@@ -1,0 +1,12 @@
+#How to run:
+#go to https://repl.it/languages/python3 and copy-paste the code into the right hand side. Click run.
+#The interpreter is a bit slow, make sure you wait until it's finished (it'll say "=>None")
+#What it'll do is spit out rows (specified by your input) of 4 random numbers between 0 and whatever upper bound you specify.
+
+import random
+steps = int(input("Enter number of timesteps: "))
+upperBound = float(input("Enter upper bound: "))
+i=0
+while(i<steps):
+    print(upperBound*random.random(), upperBound*random.random(), upperBound*random.random(), upperBound*random.random())
+    i += 1
