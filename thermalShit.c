@@ -21,8 +21,8 @@ main(){
 	FILE *ofp;
 
 	//open the files
-	tpfp = fopen("./thermalParam.txt", "r");
-	ptfp = fopen("./powerTrace.txt", "r");
+	tpfp = fopen("./thermalParam.txt", "rb");
+	ptfp = fopen("./powerTrace.txt", "rb");
 	ofp = fopen("./tempOutput.txt", "w");
 
 	//make sure the files are there
@@ -31,10 +31,25 @@ main(){
 	assert(ofp != NULL);
 
 	//number of rows in each input file.
-	//have to figure out a way to read this automatically.
-	//I believe that we can do it by scanning through, counting how many entries there are, and then dividing by 4. Not sure.
-	int thermalParamLength=5;
-	int powerTraceLength=500;
+	int thermalParamLength=1;
+	int powerTraceLength=1;
+
+	//this block finds how many rows are in each file.
+	//basically it just walks through and counts how many line breaks there are
+	char bloop;
+	while(!feof(tpfp))
+	{
+		bloop = fgetc(tpfp);
+		if(bloop == '\n'){thermalParamLength++;}
+	}
+	fseek(tpfp, 0L, SEEK_SET);
+	while(!feof(ptfp))
+	{
+		bloop = fgetc(ptfp);
+		if(bloop == '\n'){powerTraceLength++;}
+	}
+	fseek(ptfp, 0L, SEEK_SET);
+	
 
 	//declare pointer array thingies
 	//note that they're 2d. indexing is done by array[row][column]
@@ -74,6 +89,7 @@ main(){
 			powerTrace[i][j] = boop;
 		}
 	}	
+
 
 
 	//print print print
