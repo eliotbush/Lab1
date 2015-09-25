@@ -4,7 +4,7 @@
 //  9/25/15
 
 
-//I'll get everything split out into functions by Saturday night. Just posting something that works so you guys can take a look at the general idea
+//We need to split this into functions. Just posting something that works so you guys can take a look at the general idea
 //I don't think he wants us to call the file "thermalShit" but I didn't see a name specified in the assignment.
 
 #include <stdio.h>
@@ -31,7 +31,7 @@ main(){
 	assert(ofp != NULL);
 
 	//number of rows in each input file.
-	//have to figure out a way to read this automatically, I'll get it done by Saturday night
+	//have to figure out a way to read this automatically
 	int thermalParamLength=5;
 	int powerTraceLength=500;
 
