@@ -30,7 +30,7 @@ main(){
 	assert(ptfp != NULL);
 	assert(ofp != NULL);
 
-	//number of rows in each input file.
+	//number of rows in each input file. initialized as 1 because otherwise it won't count the last row
 	int thermalParamLength=1;
 	int powerTraceLength=1;
 
