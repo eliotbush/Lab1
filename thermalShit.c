@@ -76,7 +76,9 @@ main(){
 	char beep[256];
 	//boop is the double we'll convert beep into
 	double boop;
+	//iterate over rows
 	for(i=0; i<thermalParamLength; i++){
+		//iterate over columns
 		for(j=0; j<4; j++){
 			//fscanf gets the next string (really a char array) in the file, where spaces are the delimiters.
 			fscanf(tpfp, "%s", beep);
