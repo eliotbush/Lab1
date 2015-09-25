@@ -31,11 +31,14 @@ main(){
 	assert(ofp != NULL);
 
 	//number of rows in each input file.
-	//have to figure out a way to read this automatically
+	//have to figure out a way to read this automatically.
+	//I believe that we can do it by scanning through, counting how many entries there are, and then dividing by 4. Not sure.
 	int thermalParamLength=5;
 	int powerTraceLength=500;
 
 	//declare pointer array thingies
+	//note that they're 2d. indexing is done by array[row][column]
+	//so for example if you want the power of node 2 at timestep 441, it's powerTrace[2][441]
 	double **thermalParam;
 	int i;
 	int j;
@@ -55,7 +58,9 @@ main(){
 	double boop;
 	for(i=0; i<thermalParamLength; i++){
 		for(j=0; j<4; j++){
+			//fscanf gets the next string (really a char array) in the file, where spaces are the delimiters.
 			fscanf(tpfp, "%s", buff);
+			//this turns the string we read into a double
 			sscanf(buff, "%lf", &boop);
 			thermalParam[i][j] = boop;
 		}
