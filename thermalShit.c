@@ -54,21 +54,23 @@ main(){
 
 
 	//read shit from file into arrays
-	char buff[256];
+	//beep is the "string" we'll end up reading in
+	char beep[256];
+	//boop is the double we'll convert beep into
 	double boop;
 	for(i=0; i<thermalParamLength; i++){
 		for(j=0; j<4; j++){
 			//fscanf gets the next string (really a char array) in the file, where spaces are the delimiters.
-			fscanf(tpfp, "%s", buff);
+			fscanf(tpfp, "%s", beep);
 			//this turns the string we read into a double
-			sscanf(buff, "%lf", &boop);
+			sscanf(beep, "%lf", &boop);
 			thermalParam[i][j] = boop;
 		}
 	}
 	for(i=0; i<powerTraceLength; i++){
 		for(j=0; j<4; j++){
-			fscanf(ptfp, "%s", buff);
-			sscanf(buff, "%lf", &boop);
+			fscanf(ptfp, "%s", beep);
+			sscanf(beep, "%lf", &boop);
 			powerTrace[i][j] = boop;
 		}
 	}	
