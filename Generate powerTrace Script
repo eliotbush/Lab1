@@ -2,7 +2,8 @@
 #go to https://repl.it/languages/python3 and copy-paste the code (you can include the hashtagged lines, these are comments) into the right hand side. Click run.
 #The interpreter is a bit slow, make sure you wait until it's finished (it'll say "=>None")
 #What it'll do is spit out rows (specified by your input) of 4 random numbers between 0 and whatever upper bound you specify.
-
+#If you have a Python3 IDE (I'm sure XCode has it) you can also just paste this code right in. The file extension is ".py".
+#If you're trying to run it on your own and it doesn't interpret, this will not work if you try to run it as a Python 2.*/1.* script.
 import random
 steps = int(input("Enter number of timesteps: "))
 upperBound = float(input("Enter upper bound: "))
