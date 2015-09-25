@@ -37,9 +37,12 @@ main(){
 	//this block finds how many rows are in each file.
 	//basically it just walks through and counts how many line breaks there are
 	char bloop;
+	//while the file hasn't ended
 	while(!feof(tpfp))
 	{
+		//get the current character
 		bloop = fgetc(tpfp);
+		//if it's a line break, count it as a new row
 		if(bloop == '\n'){thermalParamLength++;}
 	}
 	fseek(tpfp, 0L, SEEK_SET);
