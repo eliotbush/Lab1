@@ -54,7 +54,7 @@ main(){
 
 
 	//read shit from file into arrays
-	//beep is the "string" we'll end up reading in
+	//beep is the "string" we'll end up reading in. not actually a string (I didn't even import the lib)
 	char beep[256];
 	//boop is the double we'll convert beep into
 	double boop;
