@@ -6,13 +6,13 @@
 
 //We need to split this into functions. Just posting something that works so you guys can take a look at the general idea
 //I don't think he wants us to call the file "thermalShit" but I didn't see a name specified in the assignment.
-
+//
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <assert.h>
 
-main(){
+int main(){
 	//thermal paramaters file
 	FILE *tpfp;
 	//power trace file
