@@ -12,8 +12,46 @@
 #include <math.h>
 #include <assert.h>
 
+//Runge-Kutta Algorithm
+// we need to define the differential of the effective age with respect to temperature before we can use this.
+//defined h as step size, t as time and y as the ith order output...
+double rk(double(*f)(double, double), double h, double t, double y){
+    double	k1 = h * f(t, y),
+    k2 = h * f(t + h / 2, y + k1 / 2),
+    k3 = h * f(t + h / 2, y + k2 / 2),
+    k4 = h * f(t + h, y + k3);
+    return y + (k1 + 2 * k2 + 2 * k3 + k4) / 6;
+}
+///////////////////////////////////////////////////////////////////////////////////
+    int row_count(FILE *file){
+       
+        int count = 1;
+        char test;
+    
+        while(!feof(file))
+    {
+        //get the current character
+        test = fgetc(file);
+        //if it's a line break, count it as a new row
+        if(test == '\n'){count++;}
+    
+    }
+        return count;
+    }
+
+
+
+    
+    
+ ///////////////////////////////////////////////////////////////////////////
 int main(){
-	//thermal paramaters file
+    
+    
+    double h= 0.05; //step size parameter to be passed into rk
+    double x0 = 0; //core 0
+    double x1 = 3; //core 3
+	
+    //thermal paramaters file
 	FILE *tpfp;
 	//power trace file
 	FILE *ptfp;
@@ -31,27 +69,11 @@ int main(){
 	assert(ofp != NULL);
 
 	//number of rows in each input file. initialized as 1 because otherwise it won't count the last row
-	int thermalParamLength=1;
-	int powerTraceLength=1;
-
-	//this block finds how many rows are in each file.
-	//basically it just walks through and counts how many line breaks there are
-	char bloop;
-	//while the file hasn't ended
-	while(!feof(tpfp))
-	{
-		//get the current character
-		bloop = fgetc(tpfp);
-		//if it's a line break, count it as a new row
-		if(bloop == '\n'){thermalParamLength++;}
-	}
-	//go back to the beginning of the file
+	int thermalParamLength= row_count(tpfp);
+	int powerTraceLength=row_count(ptfp);
+	
+    //go back to the beginning of the files
 	fseek(tpfp, 0L, SEEK_SET);
-	while(!feof(ptfp))
-	{
-		bloop = fgetc(ptfp);
-		if(bloop == '\n'){powerTraceLength++;}
-	}
 	fseek(ptfp, 0L, SEEK_SET);
 	
 
