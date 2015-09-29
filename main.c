@@ -2,7 +2,7 @@
 //  thermalShit.c
 //  ECE 353 Lab 1
 //  9/25/15
-//test
+//test - push
 
 //We need to split this into functions. Just posting something that works so you guys can take a look at the general idea
 //I don't think he wants us to call the file "thermalShit" but I didn't see a name specified in the assignment.
