@@ -13,7 +13,8 @@
 #include <assert.h>
 
 //Runge-Kutta Algorithm
-// we need to define the differential of the effective age with respect to temperature before we can use this.
+// 1. we need to define the differential of the effective age with respect to temperature before we can use this.
+// 2. we need to define the differential of the effective temperature with respect to time before we can use that...
 //defined h as step size, t as time and y as the ith order output...
 double rk(double(*f)(double, double), double h, double t, double y){
     double	k1 = h * f(t, y),
