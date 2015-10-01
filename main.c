@@ -4,12 +4,14 @@
 //  9/25/15
 //test - push
 
-//I don't think he wants us to call the file "thermalShit" but I didn't see a name specified in the assignment.
-//test
+//
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <assert.h>
+
+//dx/dt = 2t
+//x = (2/3)x^(3)
 
 //Runge-Kutta Algorithm
 // 1. we need to define the differential of the effective age with respect to temperature before we can use this.
@@ -22,6 +24,12 @@ double rk(double(*f)(double, double), double h, double t, double y){
     k4 = h * f(t + h, y + k3);
     return y + (k1 + 2 * k2 + 2 * k3 + k4) / 6;
 }
+
+double rktest(double x, double y){
+    
+}
+
+test
 ///////////////////////////////////////////////////////////////////////////////////
 int row_count(FILE *file){
        
