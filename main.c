@@ -10,9 +10,6 @@
 #include <math.h>
 #include <assert.h>
 
-//dx/dt = 2t
-//x = (2/3)x^(3)
-
 //Runge-Kutta Algorithm
 // 1. we need to define the differential of the effective age with respect to temperature before we can use this.
 // 2. we need to define the differential of the effective temperature with respect to time before we can use that...
@@ -26,10 +23,9 @@ double rk(double(*f)(double, double), double h, double t, double y){
 }
 
 double rktest(double x, double y){
-    
+    return 2*x;
 }
 
-test
 ///////////////////////////////////////////////////////////////////////////////////
 int row_count(FILE *file){
        
@@ -78,12 +74,16 @@ double** fileArray(FILE *file, int rows){
 }
 
 ///////////////////////////////////////////////////////////////////////////
-int main(int argc char *argv[]){
-
+//we need to be able to pass arguments...
+int main(){
+    
+//test for rk
 	double h= 0.05; //step size parameter to be passed into rk
 	double x0 = 0; //core 0
 	double x1 = 3; //core 3
 	
+    printf("x\ty\n");
+    
 	//thermal paramaters file
 	FILE *tpfp;
 	//power trace file
