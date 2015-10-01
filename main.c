@@ -51,15 +51,30 @@ double** fileArray(FILE *file, int rows){
 		array[i] = (double *) malloc(4*sizeof(double));
 	}
 
-    
-    
- ///////////////////////////////////////////////////////////////////////////
+	//beep is the "string" we'll end up reading in. not actually a string (I didn't even import the lib)
+	char beep[256];
+	//boop is the double we'll convert beep into
+	double boop;
+	//iterate over rows
+	for(i=0; i<rows; i++){
+		//iterate over columns
+		for(j=0; j<4; j++){
+			//fscanf gets the next string (really a char array) in the file, where spaces are the delimiters.
+			fscanf(file, "%s", beep);
+			//this turns the string we read into a double
+			sscanf(beep, "%lf", &boop);
+			array[i][j] = boop;
+		}
+	}
+	return array;
+}
+
+///////////////////////////////////////////////////////////////////////////
 int main(int argc char *argv[]){
-    
-    
-    double h= 0.05; //step size parameter to be passed into rk
-    double x0 = 0; //core 0
-    double x1 = 3; //core 3
+
+	double h= 0.05; //step size parameter to be passed into rk
+	double x0 = 0; //core 0
+	double x1 = 3; //core 3
 	
 	//thermal paramaters file
 	FILE *tpfp;
