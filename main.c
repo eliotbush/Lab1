@@ -4,7 +4,6 @@
 //  9/25/15
 //test - push
 
-//We need to split this into functions. Just posting something that works so you guys can take a look at the general idea
 //I don't think he wants us to call the file "thermalShit" but I didn't see a name specified in the assignment.
 //test
 #include <stdio.h>
@@ -24,7 +23,7 @@ double rk(double(*f)(double, double), double h, double t, double y){
     return y + (k1 + 2 * k2 + 2 * k3 + k4) / 6;
 }
 ///////////////////////////////////////////////////////////////////////////////////
-    int row_count(FILE *file){
+int row_count(FILE *file){
        
         int count = 1;
         char test;
@@ -37,10 +36,20 @@ double rk(double(*f)(double, double), double h, double t, double y){
         if(test == '\n'){count++;}
     
     }
+	fseek(file, 0L, SEEK_SET);
         return count;
     }
 
+///////////////////////////////////////////////////////////////////////////////////
 
+double** fileArray(FILE *file, int rows){
+	double **array;
+	int i;
+	int j;
+	array = (double **) malloc(rows*sizeof(double *));
+	for(i=0; i<rows; i++){
+		array[i] = (double *) malloc(4*sizeof(double));
+	}
 
     
     
@@ -52,7 +61,7 @@ int main(int argc char *argv[]){
     double x0 = 0; //core 0
     double x1 = 3; //core 3
 	
-    //thermal paramaters file
+	//thermal paramaters file
 	FILE *tpfp;
 	//power trace file
 	FILE *ptfp;
@@ -72,56 +81,17 @@ int main(int argc char *argv[]){
 	//number of rows in each input file. initialized as 1 because otherwise it won't count the last row
 	int thermalParamLength= row_count(tpfp);
 	int powerTraceLength=row_count(ptfp);
-	
-    //go back to the beginning of the files
-	fseek(tpfp, 0L, SEEK_SET);
-	fseek(ptfp, 0L, SEEK_SET);
-	
 
 	//declare pointer array thingies
 	//note that they're 2d. indexing is done by array[row][column]
 	//so for example if you want the power of node 2 at timestep 441, it's powerTrace[2][441]
-	double **thermalParam;
-	int i;
-	int j;
-	thermalParam = (double **) malloc(thermalParamLength*sizeof(double *));
-	for(i=0; i<thermalParamLength; i++){
-		thermalParam[i] = (double *) malloc(4*sizeof(double));
-	}
-	double **powerTrace;
-	powerTrace = (double **) malloc(powerTraceLength*sizeof(double *));
-	for(i=0; i<powerTraceLength; i++){
-		powerTrace[i] = (double *) malloc(4*sizeof(double));
-	}
+	double **thermalParam = fileArray(tpfp, thermalParamLength);
+	double **powerTrace = fileArray(ptfp, powerTraceLength);
 
-
-	//read shit from file into arrays
-	//beep is the "string" we'll end up reading in. not actually a string (I didn't even import the lib)
-	char beep[256];
-	//boop is the double we'll convert beep into
-	double boop;
-	//iterate over rows
-	for(i=0; i<thermalParamLength; i++){
-		//iterate over columns
-		for(j=0; j<4; j++){
-			//fscanf gets the next string (really a char array) in the file, where spaces are the delimiters.
-			fscanf(tpfp, "%s", beep);
-			//this turns the string we read into a double
-			sscanf(beep, "%lf", &boop);
-			thermalParam[i][j] = boop;
-		}
-	}
-	for(i=0; i<powerTraceLength; i++){
-		for(j=0; j<4; j++){
-			fscanf(ptfp, "%s", beep);
-			sscanf(beep, "%lf", &boop);
-			powerTrace[i][j] = boop;
-		}
-	}	
-
-
-
+	
 	//print print print
+	int i;
+	int j;	
 	printf("Thermal parameters:\n\n");
 	for(i=0; i<thermalParamLength; i++){
 		for(j=0; j<4; j++){
