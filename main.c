@@ -45,7 +45,7 @@ double rk(double(*f)(double, double), double h, double t, double y){
     
     
  ///////////////////////////////////////////////////////////////////////////
-int main(){
+int main(int argc char *argv[]){
     
     
     double h= 0.05; //step size parameter to be passed into rk
@@ -59,7 +59,7 @@ int main(){
 	//output file
 	FILE *ofp;
 
-	//open the files
+	//open the files - still need to convert this into user input/output arguments
 	tpfp = fopen("./thermalParam.txt", "rb");
 	ptfp = fopen("./powerTrace.txt", "rb");
 	ofp = fopen("./tempOutput.txt", "w");
