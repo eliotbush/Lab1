@@ -81,6 +81,9 @@ int main(){
 	double h= 0.05; //step size parameter to be passed into rk
 	double x0 = 0; //core 0
 	double x1 = 3; //core 3
+    double *y;
+    double x;
+    double y2;
 	
     printf("x\ty\n");
     
