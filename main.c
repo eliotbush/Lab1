@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <assert.h>
+#include <string.h>
 
 //Runge-Kutta Algorithm
 // 1. we need to define the differential of the effective age with respect to temperature before we can use this.
@@ -46,13 +47,13 @@ int row_count(FILE *file){
 
 ///////////////////////////////////////////////////////////////////////////////////
 
-double** fileArray(FILE *file, int rows){
+double** fileArray(FILE *file, int rows, int columns){
 	double **array;
 	int i;
 	int j;
 	array = (double **) malloc(rows*sizeof(double *));
 	for(i=0; i<rows; i++){
-		array[i] = (double *) malloc(4*sizeof(double));
+		array[i] = (double *) malloc(columns*sizeof(double));
 	}
 
 	//beep is the "string" we'll end up reading in. not actually a string (I didn't even import the lib)
@@ -62,7 +63,7 @@ double** fileArray(FILE *file, int rows){
 	//iterate over rows
 	for(i=0; i<rows; i++){
 		//iterate over columns
-		for(j=0; j<4; j++){
+		for(j=0; j<columns; j++){
 			//fscanf gets the next string (really a char array) in the file, where spaces are the delimiters.
 			fscanf(file, "%s", beep);
 			//this turns the string we read into a double
@@ -94,10 +95,15 @@ int main(){
 	//output file
 	FILE *ofp;
 
-	//open the files - still need to convert this into user input/output arguments
-	tpfp = fopen("./thermalParam.txt", "rb");
-	ptfp = fopen("./powerTrace.txt", "rb");
-	ofp = fopen("./tempOutput.txt", "w");
+	double ambientTemp=300;
+	if(argc=5){
+	sscanf(argv[3], "%lf", &ambientTemp);
+	ofp = fopen(argv[4], "w");}
+
+	//open the files
+	tpfp = fopen(argv[1], "rb");
+	ptfp = fopen(argv[2], "rb");
+	if(ofp==NULL){ofp = fopen(argv[3], "w");}
 
 	//make sure the files are there
 	assert(tpfp != NULL);
@@ -111,8 +117,8 @@ int main(){
 	//declare pointer array thingies
 	//note that they're 2d. indexing is done by array[row][column]
 	//so for example if you want the power of node 2 at timestep 441, it's powerTrace[2][441]
-	double **thermalParam = fileArray(tpfp, thermalParamLength);
-	double **powerTrace = fileArray(ptfp, powerTraceLength);
+	double **thermalParam = fileArray(tpfp, thermalParamLength, 4);
+	double **powerTrace = fileArray(ptfp, powerTraceLength, 5);
 
 	
 	//print print print
@@ -127,10 +133,11 @@ int main(){
 	}
 	printf("\nPower Trace:\n\n");
 	for(i=0; i<powerTraceLength; i++){
-		for(j=0; j<4; j++){
+		for(j=0; j<5; j++){
 			printf("%lf ", powerTrace[i][j]);
 		}
 		printf("\n");
 	}
+	printf("\nAmbient Temp:\n\n%lf", ambientTemp);
 
 }
