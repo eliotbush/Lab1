@@ -95,7 +95,7 @@ double* updateT(double *temps, double **param, double *trace, double h, double a
 				else{dTdt[i] -= (temps[i]-temps[j])/(ambientR*param[0][i]);}
 			}
 		}
-		dTdt[i] += trace[i]/param[0][i];
+		dTdt[i] += trace[i+1]/param[0][i];
 	}
 	for(i=0; i<4; i++){temps[i] += h * dTdt[i];}
 	return temps;
@@ -143,7 +143,7 @@ int main(int argc, char *argv[]){
 	double *T;
 	T = initializeT(ambientTemp);
 
-/*	//print and test stuff for temperature function
+	//print and test stuff for temperature function
 	printf("\nAmbient Temp:\n\n%lf\n\n", ambientTemp);
 	int i;
 	for(i=0; i<4; i++){
@@ -158,6 +158,7 @@ int main(int argc, char *argv[]){
 		}
 	}
 
+/*
 	//more print stuff
 	printf("Thermal parameters:\n\n");
 	for(i=0; i<thermalParamLength; i++){
