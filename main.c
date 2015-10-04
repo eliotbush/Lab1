@@ -92,7 +92,7 @@ int main(int argc, char *argv[]){
 	//open the files
 	tpfp = fopen(argv[1], "rb");
 	ptfp = fopen(argv[2], "rb");
-	ofp = fopen(argv[3], "w");
+	if(ofp==NULL){ofp = fopen(argv[3], "w");}
 
 	//make sure the files are there
 	assert(tpfp != NULL);
