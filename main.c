@@ -52,7 +52,7 @@ double** fileArray(FILE *file, int rows, int columns){
 		array[i] = (double *) malloc(columns*sizeof(double));
 	}
 
-	//beep is the "string" we'll end up reading in. not actually a string (I didn't even import the lib)
+	//beep is the "string" we'll end up reading in. not actually a string
 	char beep[256];
 	//boop is the double we'll convert beep into
 	double boop;
