@@ -72,6 +72,7 @@ double** fileArray(FILE *file, int rows, int columns){
 
 ///////////////////////////////////////////////////////////////////////////////
 
+//initialize the temperatures. just sets them all to ambient
 double* initializeT(double ambient){
 	double *temps;
 	temps = (double *) malloc(5*sizeof(double));
@@ -82,21 +83,30 @@ double* initializeT(double ambient){
 
 //////////////////////////////////////////////////////////////////////////
 
+//update the temperatures.
 double* updateT(double *temps, double **param, double *trace, double h, double ambientR){
+	//dTdt[i] = dT_i/dt
 	double *dTdt;
 	dTdt = (double *) malloc(4*sizeof(double));
 	int i;
+	//initialize dT/dt as 0 for all i
 	for(i=0; i<4; i++){dTdt[0]=0.0;}
 	int j;
+	//iterate over each core
 	for(i=0; i<4; i++){
+		//iterate over each other core (note i!=j) and the ambient (j=4)
 		for(j=0; j<5; j++){
 			if(i!=j){
+				//dT_i/dt = -sum(j=0..3, i!=j) T_i-T_j/R_ijC_i
 				if(j!=4){dTdt[i] -= (temps[i]-temps[j])/(param[i][j]*param[0][i]);}
+				//and the ambient term T_i-T_amb/R_ambC_i
 				else{dTdt[i] -= (temps[i]-temps[j])/(ambientR*param[0][i]);}
 			}
 		}
+		//and add the term from the dissipated power, omega_i/C_i
 		dTdt[i] += trace[i+1]/param[0][i];
 	}
+	//update the temperatures with dT/dt
 	for(i=0; i<4; i++){temps[i] += h * dTdt[i];}
 	return temps;
 }
@@ -140,6 +150,7 @@ int main(int argc, char *argv[]){
 	double **thermalParam = fileArray(tpfp, thermalParamLength, 4);
 	double **powerTrace = fileArray(ptfp, powerTraceLength, 5);
 
+	//T holds the temperatures. cores 0-3 are T[0]-T[3], T[4] is ambient
 	double *T;
 	T = initializeT(ambientTemp);
 
@@ -149,6 +160,7 @@ int main(int argc, char *argv[]){
 	for(i=0; i<4; i++){
 		printf("T%i: %lf\n", i, T[i]); 
 	}
+	//step through 100 times updating the temperature
 	int j;
 	for(j=0; j<100; j++){
 		printf("\n\nstep %i:\n", j);
