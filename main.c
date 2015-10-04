@@ -76,9 +76,6 @@ int main(int argc, char *argv[]){
 	double h= 0.05; //step size parameter to be passed into rk
 	double x0 = 0; //core 0
 	double x1 = 3; //core 3
-
-	double ambientTemp=300;
-	if(argc=5){sscanf(argv[3], "%lf", &ambientTemp);}
 	
 	//thermal paramaters file
 	FILE *tpfp;
@@ -87,11 +84,15 @@ int main(int argc, char *argv[]){
 	//output file
 	FILE *ofp;
 
+	double ambientTemp=300;
+	if(argc=5){
+	sscanf(argv[3], "%lf", &ambientTemp);
+	ofp = fopen(argv[4], "w");}
+
 	//open the files
 	tpfp = fopen(argv[1], "rb");
 	ptfp = fopen(argv[2], "rb");
-	if(argc=5){ofp = fopen(argv[4], "w");}
-	else{ofp = fopen(argv[3], "w");}
+	ofp = fopen(argv[3], "w");
 
 	//make sure the files are there
 	assert(tpfp != NULL);
