@@ -75,30 +75,28 @@ double rate(double x, double y){
     
 ////////////////////////////////////////////////////////////////////////////
 int main(int argc, char *argv[]){
-//sets up all the parameters passed into rk 
-double h= 0.05; //step size parameter to be passed into rk
-double x0 = 0; //core 0
-double x1 = 3; //core 3
-double *y;
-double x;
-double y2;
-int b;
-int n = 1 + (x1 - x0)/h;
-	
+    //sets up all the parameters passed into rk
+    double h= 0.05; //step size parameter to be passed into rk
+    double x0 = 0; //core 0
+    double x1 = 3; //core 3
+    double *y;
+    double x;
+    double y2;
+    int b;
+    int n = 1 + (x1 - x0)/h;
+    
+    //
     printf("x\ty\n");
-    
-    
     y = malloc(sizeof(double) * n);
-    
-    for (y[0] = 1, b = 1; b < n; b++)
+    for (y[0] = 1, b = 1; b < n; b++){
         y[b] = rk(rate, h, x0 + h * (b - 1), y[b-1]);
-    
+    }
     printf("x\ty\t\n------------\n");
     for (b = 0; b < n; b += 10) {
         x = x0 + h * b;
         y2 = pow(x * x / 4 + 1, 2);
         printf("%g\t%g\t\n", x, y[b]);
-    
+    }
 	//thermal paramaters file
 	FILE *tpfp;
 	//power trace file
