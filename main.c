@@ -68,8 +68,16 @@ double** fileArray(FILE *file, int rows, int columns){
 }
 
 ///////////////////////////////////////////////////////////////////////////
-double rate(double x, double y){
-    return x * sqrt(y);
+/*The age rate is a function of temperature, and temperature is a function of time*/
+double ageRate(double temp, double y){
+    double E_a = 0.8; //Activation Energy
+    double K_b = 8.617E-5; //Boltzmann's constant
+    double a = (double) -E_a/(K_b * temp);//temperature as a dependent variable
+    double b = (double) -E_a/(K_b* 300); // Ambient temperature
+    double alpha = (double) exp(a);//intermediate step
+    double beta = (double) exp(b);//intermediate step
+    double ageDiff = (double) alpha/beta;
+    return ageDiff;
 }
 
     
@@ -85,11 +93,9 @@ int main(int argc, char *argv[]){
     int b;
     int n = 1 + (x1 - x0)/h;
     
-    //
-    printf("x\ty\n");
     y = malloc(sizeof(double) * n);
     for (y[0] = 1, b = 1; b < n; b++){
-        y[b] = rk(rate, h, x0 + h * (b - 1), y[b-1]);
+        y[b] = rk(ageRate, h, x0 + h * (b - 1), y[b-1]);
     }
     printf("x\ty\t\n------------\n");
     for (b = 0; b < n; b += 10) {
@@ -148,7 +154,7 @@ int main(int argc, char *argv[]){
 		printf("\n");
 	}
 	printf("\nAmbient Temp:\n\n%lf", ambientTemp);
-    }
+    
 
 
 }
