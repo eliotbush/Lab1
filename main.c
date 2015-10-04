@@ -1,8 +1,11 @@
 //  Emma Bryce - Eliot Bush - Ygor Jean
 //  thermalShit.c
 //  ECE 353 Lab 1
-//  10/09/15
+//  9/25/15
+//test - push
 
+//I don't think he wants us to call the file "thermalShit" but I didn't see a name specified in the assignment.
+//test
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -67,19 +70,44 @@ double** fileArray(FILE *file, int rows, int columns){
 	return array;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
+double* initializeT(double ambient){
+	double *temps;
+	temps = (double *) malloc(5*sizeof(double));
+	int i;
+	for(i=0; i<5; i++){temps[i] = ambient;}
+	return temps;
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+double* updateT(double *temps, double **param, double *trace, double h, double ambientR){
+	double *dTdt;
+	dTdt = (double *) malloc(4*sizeof(double));
+	int i;
+	for(i=0; i<4; i++){dTdt[0]=0.0;}
+	int j;
+	for(i=0; i<4; i++){
+		for(j=0; j<5; j++){
+			if(i!=j){
+				if(j!=4){dTdt[i] -= (temps[i]-temps[j])/(param[i][j]*param[0][i]);}
+				else{dTdt[i] -= (temps[i]-temps[j])/(ambientR*param[0][i]);}
+			}
+		}
+		dTdt[i] += trace[i]/param[0][i];
+	}
+	for(i=0; i<4; i++){temps[i] += h * dTdt[i];}
+	return temps;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 int main(int argc, char *argv[]){
-    
-//test for rk
+
 	double h= 0.05; //step size parameter to be passed into rk
 	double x0 = 0; //core 0
 	double x1 = 3; //core 3
-    double *y;
-    double x;
-    double y2;
-	
-    printf("x\ty\n");
-    
+
 	//thermal paramaters file
 	FILE *tpfp;
 	//power trace file
@@ -112,10 +140,25 @@ int main(int argc, char *argv[]){
 	double **thermalParam = fileArray(tpfp, thermalParamLength, 4);
 	double **powerTrace = fileArray(ptfp, powerTraceLength, 5);
 
-	
-	//print print print
+	double *T;
+	T = initializeT(ambientTemp);
+
+/*	//print and test stuff for temperature function
+	printf("\nAmbient Temp:\n\n%lf\n\n", ambientTemp);
 	int i;
-	int j;	
+	for(i=0; i<4; i++){
+		printf("T%i: %lf\n", i, T[i]); 
+	}
+	int j;
+	for(j=0; j<100; j++){
+		printf("\n\nstep %i:\n", j);
+		T = updateT(T, thermalParam, powerTrace[j], h, 10.0);
+		for(i=0; i<4; i++){
+			printf("T%i: %lf\n", i, T[i]); 
+		}
+	}
+
+	//more print stuff
 	printf("Thermal parameters:\n\n");
 	for(i=0; i<thermalParamLength; i++){
 		for(j=0; j<4; j++){
@@ -130,6 +173,9 @@ int main(int argc, char *argv[]){
 		}
 		printf("\n");
 	}
-	printf("\nAmbient Temp:\n\n%lf", ambientTemp);
-
+	printf("\nAmbient Temp:\n\n%lf\n\n", ambientTemp);
+	for(i=0; i<4; i++){
+		printf("T%i: %lf\n", i, T[i]); 
+	}
+*/
 }
