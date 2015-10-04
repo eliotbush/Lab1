@@ -160,9 +160,9 @@ int main(int argc, char *argv[]){
 	for(i=0; i<4; i++){
 		printf("T%i: %lf\n", i, T[i]); 
 	}
-	//step through 100 times updating the temperature
+	//step through updating the temperature for the length of powerTrace
 	int j;
-	for(j=0; j<100; j++){
+	for(j=0; j<powerTraceLength; j++){
 		printf("\n\nstep %i:\n", j);
 		T = updateT(T, thermalParam, powerTrace[j], h, 10.0);
 		for(i=0; i<4; i++){
