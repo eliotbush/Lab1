@@ -68,6 +68,12 @@ double** fileArray(FILE *file, int rows, int columns){
 }
 
 ///////////////////////////////////////////////////////////////////////////
+double rate(double x, double y){
+    return x * sqrt(y);
+}
+
+    
+////////////////////////////////////////////////////////////////////////////
 int main(int argc, char *argv[]){
     
 //test for rk
@@ -77,8 +83,23 @@ int main(int argc, char *argv[]){
     double *y;
     double x;
     double y2;
+    int b;
+    int n = 1 + (x1 - x0)/h;
 	
     printf("x\ty\n");
+    
+    
+    y = malloc(sizeof(double) * n);
+    
+    for (y[0] = 1, b = 1; b < n; b++)
+        y[b] = rk(rate, h, x0 + h * (b - 1), y[b-1]);
+    
+    printf("x\ty\t\n------------\n");
+    for (b = 0; b < n; b += 10) {
+        x = x0 + h * b;
+        y2 = pow(x * x / 4 + 1, 2);
+        printf("%g\t%g\t\n", x, y[b]);
+    }
     
 	//thermal paramaters file
 	FILE *tpfp;
@@ -88,7 +109,7 @@ int main(int argc, char *argv[]){
 	FILE *ofp;
 
 	double ambientTemp=300;
-	if(argc=5){
+	if(argc==5){
 	sscanf(argv[3], "%lf", &ambientTemp);
 	ofp = fopen(argv[4], "w");}
 
