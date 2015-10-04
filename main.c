@@ -75,16 +75,15 @@ double rate(double x, double y){
     
 ////////////////////////////////////////////////////////////////////////////
 int main(int argc, char *argv[]){
-    
-//test for rk
-	double h= 0.05; //step size parameter to be passed into rk
-	double x0 = 0; //core 0
-	double x1 = 3; //core 3
-    double *y;
-    double x;
-    double y2;
-    int b;
-    int n = 1 + (x1 - x0)/h;
+//sets up all the parameters passed into rk 
+double h= 0.05; //step size parameter to be passed into rk
+double x0 = 0; //core 0
+double x1 = 3; //core 3
+double *y;
+double x;
+double y2;
+int b;
+int n = 1 + (x1 - x0)/h;
 	
     printf("x\ty\n");
     
