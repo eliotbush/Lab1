@@ -1,10 +1,8 @@
 //  Emma Bryce - Eliot Bush - Ygor Jean
 //  thermalShit.c
 //  ECE 353 Lab 1
-//  9/25/15
-//test - push
+//  10/09/15
 
-//
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -22,11 +20,6 @@ double rk(double(*f)(double, double), double h, double t, double y){
     k4 = h * f(t + h, y + k3);
     return y + (k1 + 2 * k2 + 2 * k3 + k4) / 6;
 }
-
-double rktest(double x, double y){
-    return 2*x;
-}
-
 ///////////////////////////////////////////////////////////////////////////////////
 int row_count(FILE *file){
        
@@ -75,8 +68,7 @@ double** fileArray(FILE *file, int rows, int columns){
 }
 
 ///////////////////////////////////////////////////////////////////////////
-//we need to be able to pass arguments...
-int main(){
+int main(int argc, char *argv[]){
     
 //test for rk
 	double h= 0.05; //step size parameter to be passed into rk
