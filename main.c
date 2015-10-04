@@ -78,7 +78,7 @@ int main(int argc, char *argv[]){
 	double x1 = 3; //core 3
 
 	double ambientTemp=300;
-	if (argv[3]!=NULL){sscanf(argv[3], "%lf", &ambientTemp);}
+	if(argc=5){sscanf(argv[3], "%lf", &ambientTemp);}
 	
 	//thermal paramaters file
 	FILE *tpfp;
@@ -90,7 +90,8 @@ int main(int argc, char *argv[]){
 	//open the files
 	tpfp = fopen(argv[1], "rb");
 	ptfp = fopen(argv[2], "rb");
-	ofp = fopen("./tempOutput.txt", "w");
+	if(argc=5){ofp = fopen(argv[4], "w");}
+	else{ofp = fopen(argv[3], "w");}
 
 	//make sure the files are there
 	assert(tpfp != NULL);
