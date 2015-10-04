@@ -42,13 +42,13 @@ int row_count(FILE *file){
 
 ///////////////////////////////////////////////////////////////////////////////////
 
-double** fileArray(FILE *file, int rows){
+double** fileArray(FILE *file, int rows, int columns){
 	double **array;
 	int i;
 	int j;
 	array = (double **) malloc(rows*sizeof(double *));
 	for(i=0; i<rows; i++){
-		array[i] = (double *) malloc(4*sizeof(double));
+		array[i] = (double *) malloc(columns*sizeof(double));
 	}
 
 	//beep is the "string" we'll end up reading in. not actually a string (I didn't even import the lib)
@@ -58,7 +58,7 @@ double** fileArray(FILE *file, int rows){
 	//iterate over rows
 	for(i=0; i<rows; i++){
 		//iterate over columns
-		for(j=0; j<4; j++){
+		for(j=0; j<columns; j++){
 			//fscanf gets the next string (really a char array) in the file, where spaces are the delimiters.
 			fscanf(file, "%s", beep);
 			//this turns the string we read into a double
@@ -70,7 +70,7 @@ double** fileArray(FILE *file, int rows){
 }
 
 ///////////////////////////////////////////////////////////////////////////
-int main(int argc char *argv[]){
+int main(int argc, char *argv[]){
 
 	double h= 0.05; //step size parameter to be passed into rk
 	double x0 = 0; //core 0
@@ -100,8 +100,8 @@ int main(int argc char *argv[]){
 	//declare pointer array thingies
 	//note that they're 2d. indexing is done by array[row][column]
 	//so for example if you want the power of node 2 at timestep 441, it's powerTrace[2][441]
-	double **thermalParam = fileArray(tpfp, thermalParamLength);
-	double **powerTrace = fileArray(ptfp, powerTraceLength);
+	double **thermalParam = fileArray(tpfp, thermalParamLength, 4);
+	double **powerTrace = fileArray(ptfp, powerTraceLength, 5);
 
 	
 	//print print print
@@ -116,7 +116,7 @@ int main(int argc char *argv[]){
 	}
 	printf("\nPower Trace:\n\n");
 	for(i=0; i<powerTraceLength; i++){
-		for(j=0; j<4; j++){
+		for(j=0; j<5; j++){
 			printf("%lf ", powerTrace[i][j]);
 		}
 		printf("\n");
