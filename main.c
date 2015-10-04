@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <assert.h>
+#include <string.h>
 
 //Runge-Kutta Algorithm
 // 1. we need to define the differential of the effective age with respect to temperature before we can use this.
@@ -75,6 +76,9 @@ int main(int argc, char *argv[]){
 	double h= 0.05; //step size parameter to be passed into rk
 	double x0 = 0; //core 0
 	double x1 = 3; //core 3
+
+	double ambientTemp=300;
+	if (argv[3]!=NULL){sscanf(argv[3], "%lf", &ambientTemp);}
 	
 	//thermal paramaters file
 	FILE *tpfp;
@@ -83,9 +87,9 @@ int main(int argc, char *argv[]){
 	//output file
 	FILE *ofp;
 
-	//open the files - still need to convert this into user input/output arguments
-	tpfp = fopen("./thermalParam.txt", "rb");
-	ptfp = fopen("./powerTrace.txt", "rb");
+	//open the files
+	tpfp = fopen(argv[1], "rb");
+	ptfp = fopen(argv[2], "rb");
 	ofp = fopen("./tempOutput.txt", "w");
 
 	//make sure the files are there
@@ -99,8 +103,7 @@ int main(int argc, char *argv[]){
 
 	//declare pointer array thingies
 	//note that they're 2d. indexing is done by array[row][column]
-	//powetrace's first column is the current timestep (see krishna's email)
-	//so for example if you want the power of node 2 at timestep 441, it's powerTrace[441][3]
+	//so for example if you want the power of node 2 at timestep 441, it's powerTrace[2][441]
 	double **thermalParam = fileArray(tpfp, thermalParamLength, 4);
 	double **powerTrace = fileArray(ptfp, powerTraceLength, 5);
 
@@ -122,5 +125,6 @@ int main(int argc, char *argv[]){
 		}
 		printf("\n");
 	}
+	printf("\nAmbient Temp:\n\n%lf", ambientTemp);
 
 }
