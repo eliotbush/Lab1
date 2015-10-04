@@ -99,7 +99,6 @@ int main(int argc, char *argv[]){
         x = x0 + h * b;
         y2 = pow(x * x / 4 + 1, 2);
         printf("%g\t%g\t\n", x, y[b]);
-    }
     
 	//thermal paramaters file
 	FILE *tpfp;
@@ -152,5 +151,7 @@ int main(int argc, char *argv[]){
 		printf("\n");
 	}
 	printf("\nAmbient Temp:\n\n%lf", ambientTemp);
+    }
+
 
 }
