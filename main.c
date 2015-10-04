@@ -146,7 +146,7 @@ int main(int argc, char *argv[]){
 
 	//declare pointer array thingies
 	//note that they're 2d. indexing is done by array[row][column]
-	//so for example if you want the power of node 2 at timestep 441, it's powerTrace[2][441]
+	//so for example if you want the power of node 2 at timestep 441, it's powerTrace[441][3]
 	double **thermalParam = fileArray(tpfp, thermalParamLength, 4);
 	double **powerTrace = fileArray(ptfp, powerTraceLength, 5);
 
