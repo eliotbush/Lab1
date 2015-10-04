@@ -84,6 +84,7 @@ double* initializeT(double ambient){
 //////////////////////////////////////////////////////////////////////////
 
 //update the temperatures.
+//this should be using RK, although I don't really understand why it's necessary when you can just solve it explicitly.
 double* updateT(double *temps, double **param, double *trace, double h, double ambientR){
 	//dTdt[i] = dT_i/dt
 	double *dTdt;
