@@ -14,8 +14,8 @@
 //Need to define age at each step...I added the incompatible code in the for loop. The output should be the age of each core.
 
 //defined h as step size, t as time and y as the ith order output...
-double rk(double(*f)(double, double), double h, double t, double y){
-    double	k1 = h * f(t, y),
+double rk(double(*f)(double), double h, double t, double y){
+    double	k1 = h * f(t),
     k2 = h * f(t + h / 2, y + k1 / 2),
     k3 = h * f(t + h / 2, y + k2 / 2),
     k4 = h * f(t + h, y + k3);
@@ -99,8 +99,7 @@ double* updateT(double *temps, double **param, double *trace, double h, double a
 				//dT_i/dt = -sum(j=0..3, i!=j) T_i-T_j/R_ijC_i
 				if(j!=4){dTdt[i] -= (temps[i]-temps[j])/(param[i][j]*param[0][i]);}
 				//and the ambient term T_i-T_amb/R_ambC_i
-				else{dTdt[i] -= (temps[i]-temps[j])/(ambientR*param[0][i]);}
-			}
+				else{dTdt[i] -= (temps[i]-temps[j])/(ambientR*param[0][i]);}			}
 		}
 		//and add the term from the dissipated power, omega_i/C_i
 		dTdt[i] += trace[i+1]/param[0][i];
@@ -112,14 +111,14 @@ double* updateT(double *temps, double **param, double *trace, double h, double a
 
 ///////////////////////////////////////////////////////////////////////////
 /*The age rate is a function of temperature, and temperature is a function of time*/
-double ageRate(double temp, double y){
+double ageRate(double temp){
     double E_a = 0.8; //Activation Energy
     double K_b = 8.617E-5; //Boltzmann's constant
     double a = (double) -E_a/(K_b * temp);//temperature as a dependent variable
     double b = (double) -E_a/(K_b* 300); // Ambient temperature
     double effDevice = (double) exp(a);//intermediate step defining the aging effect at device temperature
     double effAmbient = (double) exp(b);//intermediate step defining the aging effect at ambient temperature
-    double ageDiff = (double) effDevice/effAmbient;//the effective age if the device
+    double ageDiff = (double) effDevice/effAmbient;//the effective age of the device
     return ageDiff;
 }
 
@@ -129,25 +128,16 @@ int main(int argc, char *argv[]){
     
     
     //sets up all the parameters passed into rk
-    double h= 0.05; //step size parameter to be passed into rk
+    double h= 0.005; //step size parameter to be passed into rk
     double x0 = 0; //core 0
     double x1 = 3; //core 3
     double *y;
     double x;
     double y2;
-    int b;
+    int index;
     int n = 1 + (x1 - x0)/h;
     
-    y = malloc(sizeof(double) * n);
-    for (y[0] = 1, b = 1; b < n; b++){
-        y[b] = rk(ageRate, h, x0 + h * (b - 1), y[b-1]);
-    }
-    printf("x\ty\t\n------------\n");
-    for (b = 0; b < n; b += 10) {
-        x = x0 + h * b;
-        y2 = pow(x * x / 4 + 1, 2);
-        printf("%g\t%g\t\n", x, y[b]);
-    }
+ 
     
 
     //thermal paramaters file
@@ -195,28 +185,18 @@ int main(int argc, char *argv[]){
 	//step through updating the temperature for the length of powerTrace
 	int j;
 	for(j=0; j<powerTraceLength; j++){
-		printf("\n\nstep %i:\n", j);
+		printf("\n\nTime %f(s):\n", j*h);
 		T = updateT(T, thermalParam, powerTrace[j], h, 10.0);
         
         
-        /*Code here is a place holder for T[i] to get passed into ageRate
-        
-        y = malloc(sizeof(double) * n);
-        for (y[0] = 1, b = 1; b < n; b++){
-            y[b] = rk(ageRate, h, x0 + h * (b - 1), y[b-1]);
-        }
-        printf("x\ty\t\n------------\n");
-        for (b = 0; b < n; b += 10) {
-            x = x0 + h * b;
-            y2 = pow(x * x / 4 + 1, 2);
-            printf("%g\t%g\t\n", x, y[b]);
-        }
-         */
-        
+        /*Code here is a place holder for T[i] to get passed into ageRate*/
         for(i=0; i<4; i++){
-			printf("T%i: %lf\n", i, T[i]); 
+            double age=ageRate(T[i]);//not sure if desired output
+			printf("Temp. of core %i: %lf\nAge:%lf\n", i, T[i],age);
+            
 		}
 	}
+
 /*
 	//more print stuff
 	printf("Thermal parameters:\n\n");
