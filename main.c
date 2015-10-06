@@ -1,8 +1,11 @@
 //  Emma Bryce - Eliot Bush - Ygor Jean
 //  thermalShit.c
 //  ECE 353 Lab 1
-//  10/09/15
+//  9/25/15
+//test - push
 
+//I don't think he wants us to call the file "thermalShit" but I didn't see a name specified in the assignment.
+//test
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -49,7 +52,7 @@ double** fileArray(FILE *file, int rows, int columns){
 		array[i] = (double *) malloc(columns*sizeof(double));
 	}
 
-	//beep is the "string" we'll end up reading in. not actually a string (I didn't even import the lib)
+	//beep is the "string" we'll end up reading in. not actually a string
 	char beep[256];
 	//boop is the double we'll convert beep into
 	double boop;
@@ -67,6 +70,48 @@ double** fileArray(FILE *file, int rows, int columns){
 	return array;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
+//initialize the temperatures. just sets them all to ambient
+double* initializeT(double ambient){
+	double *temps;
+	temps = (double *) malloc(5*sizeof(double));
+	int i;
+	for(i=0; i<5; i++){temps[i] = ambient;}
+	return temps;
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+//update the temperatures.
+//this should be using RK, although I don't really understand why it's necessary when you can just solve it explicitly.
+double* updateT(double *temps, double **param, double *trace, double h, double ambientR){
+	//dTdt[i] = dT_i/dt
+	double *dTdt;
+	dTdt = (double *) malloc(4*sizeof(double));
+	int i;
+	//initialize dT/dt as 0 for all i
+	for(i=0; i<4; i++){dTdt[0]=0.0;}
+	int j;
+	//iterate over each core
+	for(i=0; i<4; i++){
+		//iterate over each other core (note i!=j) and the ambient (j=4)
+		for(j=0; j<5; j++){
+			if(i!=j){
+				//dT_i/dt = -sum(j=0..3, i!=j) T_i-T_j/R_ijC_i
+				if(j!=4){dTdt[i] -= (temps[i]-temps[j])/(param[i][j]*param[0][i]);}
+				//and the ambient term T_i-T_amb/R_ambC_i
+				else{dTdt[i] -= (temps[i]-temps[j])/(ambientR*param[0][i]);}
+			}
+		}
+		//and add the term from the dissipated power, omega_i/C_i
+		dTdt[i] += trace[i+1]/param[0][i];
+	}
+	//update the temperatures with dT/dt
+	for(i=0; i<4; i++){temps[i] += h * dTdt[i];}
+	return temps;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 double rate(double x, double y){
     return x * sqrt(y);
@@ -75,8 +120,7 @@ double rate(double x, double y){
     
 ////////////////////////////////////////////////////////////////////////////
 int main(int argc, char *argv[]){
-    
-//test for rk
+
 	double h= 0.05; //step size parameter to be passed into rk
 	double x0 = 0; //core 0
 	double x1 = 3; //core 3
@@ -129,14 +173,32 @@ int main(int argc, char *argv[]){
 
 	//declare pointer array thingies
 	//note that they're 2d. indexing is done by array[row][column]
-	//so for example if you want the power of node 2 at timestep 441, it's powerTrace[2][441]
+	//so for example if you want the power of node 2 at timestep 441, it's powerTrace[441][3]
 	double **thermalParam = fileArray(tpfp, thermalParamLength, 4);
 	double **powerTrace = fileArray(ptfp, powerTraceLength, 5);
 
-	
-	//print print print
+	//T holds the temperatures. cores 0-3 are T[0]-T[3], T[4] is ambient
+	double *T;
+	T = initializeT(ambientTemp);
+
+	//print and test stuff for temperature function
+	printf("\nAmbient Temp:\n\n%lf\n\n", ambientTemp);
 	int i;
-	int j;	
+	for(i=0; i<4; i++){
+		printf("T%i: %lf\n", i, T[i]); 
+	}
+	//step through updating the temperature for the length of powerTrace
+	int j;
+	for(j=0; j<powerTraceLength; j++){
+		printf("\n\nstep %i:\n", j);
+		T = updateT(T, thermalParam, powerTrace[j], h, 10.0);
+		for(i=0; i<4; i++){
+			printf("T%i: %lf\n", i, T[i]); 
+		}
+	}
+
+/*
+	//more print stuff
 	printf("Thermal parameters:\n\n");
 	for(i=0; i<thermalParamLength; i++){
 		for(j=0; j<4; j++){
@@ -151,6 +213,9 @@ int main(int argc, char *argv[]){
 		}
 		printf("\n");
 	}
-	printf("\nAmbient Temp:\n\n%lf", ambientTemp);
-
+	printf("\nAmbient Temp:\n\n%lf\n\n", ambientTemp);
+	for(i=0; i<4; i++){
+		printf("T%i: %lf\n", i, T[i]); 
+	}
+*/
 }

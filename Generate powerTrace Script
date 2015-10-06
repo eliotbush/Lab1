@@ -7,8 +7,9 @@
 
 import random
 steps = int(input("Enter number of timesteps: "))
+ambient = float(input("Enter lower bound: "))
 upperBound = float(input("Enter upper bound: "))
 i=0
 while(i<steps):
-    print((.05*i), upperBound*random.random(), upperBound*random.random(), upperBound*random.random(), upperBound*random.random())
+    print((.05*i), ambient+(upperBound-ambient)*random.random(), ambient+(upperBound-ambient)*random.random(), ambient+(upperBound-ambient)*random.random(), ambient+(upperBound-ambient)*random.random())
     i += 1
