@@ -199,11 +199,7 @@ int main(int argc, char *argv[]){
 		T = updateT(T, thermalParam, powerTrace[j], h, 10.0);
         
         
-        
-        
-        
-        
-        
+        /*Code here is a place holder for T[i] to get passed into ageRate
         
         y = malloc(sizeof(double) * n);
         for (y[0] = 1, b = 1; b < n; b++){
@@ -215,12 +211,7 @@ int main(int argc, char *argv[]){
             y2 = pow(x * x / 4 + 1, 2);
             printf("%g\t%g\t\n", x, y[b]);
         }
-
-		
-        
-        
-        
-        
+         */
         
         for(i=0; i<4; i++){
 			printf("T%i: %lf\n", i, T[i]); 
