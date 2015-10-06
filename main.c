@@ -50,7 +50,7 @@ double** fileArray(FILE *file, int rows, int columns){
 		array[i] = (double *) malloc(columns*sizeof(double));
 	}
 
-	//beep is the "string" we'll end up reading in. not actually a string
+	//beep is the "string" we'll end up reading in. Not actually a string
 	char beep[256];
 	//boop is the double we'll convert beep into
 	double boop;
@@ -126,11 +126,10 @@ double ageRate(double temp, double y){
     
 ////////////////////////////////////////////////////////////////////////////
 int main(int argc, char *argv[]){
-
-	double h= 0.05; //step size parameter to be passed into rk
-	double x0 = 0; //core 0
-	double x1 = 3; //core 3
-
+    //sets up all the parameters passed into rk
+    double h= 0.05; //step size parameter to be passed into rk
+    double x0 = 0; //core 0
+    double x1 = 3; //core 3
     double *y;
     double x;
     double y2;
