@@ -129,8 +129,7 @@ int main(int argc, char *argv[]){
 	int thermalParamLength= row_count(tpfp);
 	int powerTraceLength=row_count(ptfp);
 
-	//declare point
-    er array thingies
+	//declare pointer array thingies
 	//note that they're 2d. indexing is done by array[row][column]
 	//so for example if you want the power of node 2 at timestep 441, it's powerTrace[2][441]
 	double **thermalParam = fileArray(tpfp, thermalParamLength, 4);
