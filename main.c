@@ -10,17 +10,6 @@
 #include <assert.h>
 #include <string.h>
 
-//Runge-Kutta Algorithm
-//Need to define age at each step...I added the incompatible code in the for loop. The output should be the age of each core.
-
-//defined h as step size, t as time and y as the ith order output...
-double rk(double(*f)(double), double h, double t, double y){
-    double	k1 = h * f(t),
-    k2 = h * f(t + h / 2, y + k1 / 2),
-    k3 = h * f(t + h / 2, y + k2 / 2),
-    k4 = h * f(t + h, y + k3);
-    return y + (k1 + 2 * k2 + 2 * k3 + k4) / 6;
-}
 ////////////////////////////////////////////////////////////////////////////////////
 int row_count(FILE *file){
        
@@ -122,23 +111,15 @@ double ageRate(double temp){
     return ageDiff;
 }
 
-    
 ////////////////////////////////////////////////////////////////////////////
 int main(int argc, char *argv[]){
     
     
     //sets up all the parameters passed into rk
-    double h= 0.005; //step size parameter to be passed into rk
-    double x0 = 0; //core 0
-    double x1 = 3; //core 3
-    double *y;
+    
+    double h = 0.005; //step size parameter
     double x;
     double y2;
-    int index;
-    int n = 1 + (x1 - x0)/h;
-    
- 
-    
 
     //thermal paramaters file
 	FILE *tpfp;
