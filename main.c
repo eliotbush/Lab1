@@ -3,7 +3,7 @@
 //  ECE 353 Lab 1
 //  10/09/15
 
-//merge attempt
+//merge attempt..
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
