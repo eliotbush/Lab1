@@ -197,7 +197,6 @@ int main(int argc, char *argv[]){
 			printf("T%i: %lf\n", i, T[i]); 
 		}
 	}
-
 /*
 	//more print stuff
 	printf("Thermal parameters:\n\n");
@@ -220,3 +219,4 @@ int main(int argc, char *argv[]){
 	}
 */
 }
+
