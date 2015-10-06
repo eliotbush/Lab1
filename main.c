@@ -11,8 +11,8 @@
 #include <string.h>
 
 //Runge-Kutta Algorithm
-// 1. we need to define the differential of the effective age with respect to temperature before we can use this.
-// 2. we need to define the differential of the effective temperature with respect to time before we can use that...
+//Need to define age at each step...I added the incompatible code in the for loop. The output should be the age of each core.
+
 //defined h as step size, t as time and y as the ith order output...
 double rk(double(*f)(double, double), double h, double t, double y){
     double	k1 = h * f(t, y),
@@ -117,15 +117,17 @@ double ageRate(double temp, double y){
     double K_b = 8.617E-5; //Boltzmann's constant
     double a = (double) -E_a/(K_b * temp);//temperature as a dependent variable
     double b = (double) -E_a/(K_b* 300); // Ambient temperature
-    double alpha = (double) exp(a);//intermediate step
-    double beta = (double) exp(b);//intermediate step
-    double ageDiff = (double) alpha/beta;
+    double effDevice = (double) exp(a);//intermediate step defining the aging effect at device temperature
+    double effAmbient = (double) exp(b);//intermediate step defining the aging effect at ambient temperature
+    double ageDiff = (double) effDevice/effAmbient;//the effective age if the device
     return ageDiff;
 }
 
     
 ////////////////////////////////////////////////////////////////////////////
 int main(int argc, char *argv[]){
+    
+    
     //sets up all the parameters passed into rk
     double h= 0.05; //step size parameter to be passed into rk
     double x0 = 0; //core 0
@@ -146,7 +148,9 @@ int main(int argc, char *argv[]){
         y2 = pow(x * x / 4 + 1, 2);
         printf("%g\t%g\t\n", x, y[b]);
     }
-	//thermal paramaters file
+    
+
+    //thermal paramaters file
 	FILE *tpfp;
 	//power trace file
 	FILE *ptfp;
@@ -169,8 +173,8 @@ int main(int argc, char *argv[]){
 	assert(ofp != NULL);
 
 	//number of rows in each input file. initialized as 1 because otherwise it won't count the last row
-	int thermalParamLength= row_count(tpfp);
-	int powerTraceLength=row_count(ptfp);
+	int thermalParamLength = row_count(tpfp);
+	int powerTraceLength = row_count(ptfp);
 
 	//declare pointer array thingies
 	//note that they're 2d. indexing is done by array[row][column]
@@ -193,7 +197,32 @@ int main(int argc, char *argv[]){
 	for(j=0; j<powerTraceLength; j++){
 		printf("\n\nstep %i:\n", j);
 		T = updateT(T, thermalParam, powerTrace[j], h, 10.0);
-		for(i=0; i<4; i++){
+        
+        
+        
+        
+        
+        
+        
+        
+        y = malloc(sizeof(double) * n);
+        for (y[0] = 1, b = 1; b < n; b++){
+            y[b] = rk(ageRate, h, x0 + h * (b - 1), y[b-1]);
+        }
+        printf("x\ty\t\n------------\n");
+        for (b = 0; b < n; b += 10) {
+            x = x0 + h * b;
+            y2 = pow(x * x / 4 + 1, 2);
+            printf("%g\t%g\t\n", x, y[b]);
+        }
+
+		
+        
+        
+        
+        
+        
+        for(i=0; i<4; i++){
 			printf("T%i: %lf\n", i, T[i]); 
 		}
 	}
