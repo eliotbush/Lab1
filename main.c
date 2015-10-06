@@ -1,11 +1,9 @@
 //  Emma Bryce - Eliot Bush - Ygor Jean
 //  thermalShit.c
 //  ECE 353 Lab 1
-//  9/25/15
-//test - push
+//  10/09/15
 
-//I don't think he wants us to call the file "thermalShit" but I didn't see a name specified in the assignment.
-//test
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -124,6 +122,7 @@ int main(int argc, char *argv[]){
 	double h= 0.05; //step size parameter to be passed into rk
 	double x0 = 0; //core 0
 	double x1 = 3; //core 3
+
     double *y;
     double x;
     double y2;
