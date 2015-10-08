@@ -3,7 +3,7 @@
 //  ECE 353 Lab 1
 //  10/09/15
 
-//merge attempt..
+//merge attempt...
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -19,7 +19,6 @@ int powerTraceLength;
 double ambientTemp;
 //equivalent resistance between the cores and ambient. this may need to be an array, need to ask Krishna about it
 double ambientR;
-
 /////////////////////////////////////////////////////////////////////////////////////
 
 //Runge-Kutta Algorithm
