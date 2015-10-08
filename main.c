@@ -182,11 +182,11 @@ double* ageRate(double t, double *temps){
     b = (double *) malloc(4*sizeof(double));
     double *c;
     c = (double *) malloc(4*sizeof(double));
-    for(i=0, i<4, i++){
-        a[i] = (double) -E_a/(K_b)*temp[i]; //temperature as a dependent variable
-        a[i] = exp(a); //intermediate step defining the aging effect at device temperature
+    for(i=0; i<4; i++){
+        a[i] = (double) -E_a/(K_b)*temps[i]; //temperature as a dependent variable
+        a[i] = exp(a[i]); //intermediate step defining the aging effect at device temperature
         b[i] = (double) -E_a/(K_b* 300); // Ambient temperature
-        b[i] = exp(b); //intermediate step defining the aging effect at ambient
+        b[i] = exp(b[i]); //intermediate step defining the aging effect at ambient
         c[i] = a[i]/b[i]; //the age rate the device
     }
     
@@ -199,27 +199,11 @@ int main(int argc, char *argv[]){
 
 	double h = 0.005; //step size parameter to be passed into rk
 	double t = 0;
-
     double *y;
     double x;
     double y2;
-    int b;
-    int n = 1 + (x1 - x0)/h;
-	
-    printf("x\ty\n");
-    
-    
-    y = malloc(sizeof(double) * n);
-    
-    for (y[0] = 1, b = 1; b < n; b++)
-        y[b] = rk(rate, h, x0 + h * (b - 1), y[b-1]);
-    
-    printf("x\ty\t\n------------\n");
-    for (b = 0; b < n; b += 10) {
-        x = x0 + h * b;
-        y2 = pow(x * x / 4 + 1, 2);
-        printf("%g\t%g\t\n", x, y[b]);
-    }
+
+
     
 	//thermal paramaters file
 	FILE *tpfp;
@@ -255,7 +239,7 @@ int main(int argc, char *argv[]){
 
 	//T holds the temperatures. cores 0-3 are T[0]-T[3], T[4] is ambient
 	double *T;
-	T = initializeT(ambientTemp);
+	T = initializeT();
 
 	//step through updating the temperature
 	int i;
