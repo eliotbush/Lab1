@@ -170,8 +170,27 @@ double* calculatedTdt(double t, double *temps){
 }
 
 ///////////////////////////////////////////////////////////////////////////
-double rate(double x, double y){
-    return x * sqrt(y);
+double* ageRate(double t, double *temps){
+    int i;
+    double *ageDiff;
+    ageDiff = (double *) malloc(4*sizeof(double));
+    double E_a = 0.8; //Activation Energy
+    double K_b = 8.617E-5; //Boltzmann's constant
+    double *a;
+    a = (double *) malloc(4*sizeof(double));
+    double *b;
+    b = (double *) malloc(4*sizeof(double));
+    double *c;
+    c = (double *) malloc(4*sizeof(double));
+    for(i=0, i<4, i++){
+        a[i] = (double) -E_a/(K_b)*temp[i]; //temperature as a dependent variable
+        a[i] = exp(a); //intermediate step defining the aging effect at device temperature
+        b[i] = (double) -E_a/(K_b* 300); // Ambient temperature
+        b[i] = exp(b); //intermediate step defining the aging effect at ambient
+        c[i] = a[i]/b[i]; //the age rate the device
+    }
+    
+    return c;
 }
 
     
