@@ -134,50 +134,76 @@ double* initializeT(){
 //////////////////////////////////////////////////////////////////////////
 
 //calculate dT/dt at T,t
-double* calculatedTdt(double t, double *temps){
-    //dTdt[i] = dT_i/dt
-    double *dTdt;
-    dTdt = (double *) malloc(5*sizeof(double));
-    int i;
-    //initialize dT/dt as 0 for all i
-    for(i=0; i<5; i++){dTdt[0]=0.0;}
-    
-    //work out which entry in the power trace we're currently on
-    //go through the power trace until the time entry in the trace exceeds the current time and save which step it's after
-    int step = 0;
-    i=0;
-    while (i<powerTraceLength){
-        if (powerTrace[i][0]>t){
-            step = i-1;
-            i = powerTraceLength;
-        }
-        else{i++;}
-    }
-    
-    int j;
-    //iterate over each core
-    for(i=0; i<4; i++){
-        //iterate over each other core (note i!=j) and the ambient (j=4)
-        for(j=0; j<5; j++){
-            if(i!=j){
-                //dT_i/dt = -sum(j=0..3, i!=j) T_i-T_j/R_ijC_i
-                if(j!=4){dTdt[i] -= (temps[i]-temps[j])/(thermalParam[i][j]*thermalParam[0][i]);}
-                //and the ambient term T_i-T_amb/R_ambC_i
-                else{dTdt[i] -= (temps[i]-temps[j])/(ambientR*thermalParam[0][i]);}
-            }
-        }
-        //and add the term from the dissipated power, omega_i/C_i
-        dTdt[i] += powerTrace[step][i+1]/thermalParam[0][i];
-    }
-    
-    
-    return dTdt;
+double* calculatedTdt(double t, double *temps){	
+	//dTdt[i] = dT_i/dt
+	double *dTdt;
+	dTdt = (double *) malloc(5*sizeof(double));
+	int i;
+	//initialize dT/dt as 0 for all i
+	for(i=0; i<5; i++){dTdt[0]=0.0;}
+
+	//work out which entry in the power trace we're currently on
+	//go through the power trace until the time entry in the trace exceeds the current time and save which step it's after
+	int step = 0;
+	i=0;
+	while (i<powerTraceLength){
+		if (powerTrace[i][0]>t){
+			step = i-1;
+			i = powerTraceLength;
+		}
+		else{i++;}
+	}
+
+	int j;
+	//iterate over each core
+	for(i=0; i<4; i++){
+		//iterate over each other core (note i!=j) and the ambient (j=4)
+		for(j=0; j<5; j++){
+			if(i!=j){
+				//dT_i/dt = -sum(j=0..3, i!=j) T_i-T_j/R_ijC_i
+				if(j!=4){dTdt[i] -= (temps[i]-temps[j])/(thermalParam[i][j]*thermalParam[0][i]);}
+				//and the ambient term T_i-T_amb/R_ambC_i
+				else{dTdt[i] -= (temps[i]-temps[j])/(ambientR*thermalParam[0][i]);}
+			}
+		}
+		//and add the term from the dissipated power, omega_i/C_i
+		dTdt[i] += powerTrace[step][i+1]/thermalParam[0][i];
+	}
+
+	
+	return dTdt;
 }
 
 ///////////////////////////////////////////////////////////////////////////
+double* ageRate(double t, double *temps){
+    int i;
+    double *ageDiff;
+    ageDiff = (double *) malloc(4*sizeof(double));
+    double E_a = 0.8; //Activation Energy
+    double K_b = 8.617E-5; //Boltzmann's constant
+    double *a;
+    a = (double *) malloc(4*sizeof(double));
+    double *b;
+    b = (double *) malloc(4*sizeof(double));
+    double *c;
+    c = (double *) malloc(4*sizeof(double));
+    for(i=0; i<4; i++){
+        a[i] = (double) -E_a/(K_b)*temps[i]; //temperature as a dependent variable
+        a[i] = exp(a[i]); //intermediate step defining the aging effect at device temperature
+        b[i] = (double) -E_a/(K_b* 300); // Ambient temperature
+        b[i] = exp(b[i]); //intermediate step defining the aging effect at ambient
+        c[i] = a[i]/b[i]; //the age rate the device
+    }
+    return c;
+}
+///////////////////////////////////////////////////////////////////////////
 int main(int argc, char *argv[]){
-    
-    double t = 0;
+
+	double h = 0.005; //step size parameter to be passed into rk
+	double t = 0;
+        
+
+
     
     //thermal paramaters file
     FILE *tpfp;
