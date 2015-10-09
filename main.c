@@ -1,8 +1,8 @@
 //  Emma Bryce - Eliot Bush - Ygor Jean
 //  thermalSimulation.c
 //  ECE 353 Lab 1
-//  10/7/15
-////////////////////////////////////////////////////////////////////////////////////////
+//  10/9/15
+/////////////////////////////////////////////////////// /////////////////////////////////
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,7 +10,7 @@
 #include <assert.h>
 #include <string.h>
 
-////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
 
 //globals we'll need
 double **thermalParam;
@@ -18,12 +18,13 @@ double **powerTrace;
 int powerTraceLength;
 double ambientTemp;
 //equivalent resistance between the cores and ambient. this may need to be an array, need to ask Krishna about it
-double ambientR;
+double h = 0.005; //step size parameter to be passed into rk
+
 /////////////////////////////////////////////////////////////////////////////////////
 
 //Runge-Kutta Algorithm
 //This has been modified to solve a system of functions y1(t+h), y2(t+h), ... yn(t+h) given f(y,t)=y' as an input
-//n denotes how many functions are in the system; precision of the rk function
+//n denotes how many functions are in the system
 
 double* rk(double* (*f)(double, double*), double h, double t, double *y, int n){
     //k is a 4xn array storying (k10, k11,...k1n),(k20,...k2n)...(k40...k4n)
@@ -183,14 +184,16 @@ double* ageRate(double t, double *temps){
     a = (double *) malloc(4*sizeof(double));
     double *b;
     b = (double *) malloc(4*sizeof(double));
+    double *c;
+    c = (double *) malloc(4*sizeof(double));
     for(i=0; i<4; i++){
         a[i] = (double) -E_a/(K_b*temps[i]); //temperature as a dependent variable
         a[i] = exp(a[i]); //intermediate step defining the aging effect at device temperature
         b[i] = (double) -E_a/(K_b* ambientTemp); // Ambient temperature
         b[i] = exp(b[i]); //intermediate step defining the aging effect at ambient
-        ageDiff[i] = a[i]/b[i]; //the age rate the device
+        c[i] = a[i]/b[i]; //the age rate the device
     }
-    return ageDiff;
+    return c;
 }
 ///////////////////////////////////////////////////////////////////////////
 int main(int argc, char *argv[]){
@@ -244,20 +247,45 @@ int main(int argc, char *argv[]){
     int i;
     double* aP = (double *) malloc(4*sizeof(double)); //age pointer...
     for(i=0; i<4; i++){aP[i] = 1;}
+    double* age;
     
     //step through updating the temperature
     int j=0;
-    double endTime = powerTrace[powerTraceLength-1][0];
-    while (t<=endTime){
-        printf("\n\nStep %i:\n", j);
-        printf("\nTime: %lf\n", t);
+    //counts how many timesteps are taken in each entry of powerTrace
+    int counter;
+    //placeholder variable for t (used in output)
+    double t_temp;
+    for(j=0; j<(powerTraceLength-1); j++){
+        t_temp = t;
+        counter=0;
+	while(t<powerTrace[j+1][0]){
+            T = rk(&calculatedTdt, h, t, T, 5);
+            aP = ageRate(t, T);
+            age = rk(&ageRate, h, t, aP, 4);
+	    counter++;
+            t+=h;
+	}
+
+	//file output stuff
+        fprintf(ofp, "%lf ", t_temp);
+	for(i=0; i<4; i++){
+            fprintf(ofp, "%lf ", T[i]);
+            fprintf(ofp, "%lf ", age[i]);
+        }
+	fprintf(ofp, "\r\n");
+    }
+
+    //do one last walkthrough for the last entry of powerTrace
+    t_temp=t;
+    for(j=0; j<counter; j++){
         T = rk(&calculatedTdt, h, t, T, 5);
         aP = ageRate(t, T);
-        double *age = rk(&ageRate, h, t, aP, 4);
-        for(i=0; i<4; i++){
-            printf("T%i: %lf\nA%i: %lf\n", i, T[i], i, age[i]);
-        }
+        age = rk(&ageRate, h, t, aP, 4);
         t+=h;
-        j++;
+    }
+    fprintf(ofp, "%lf ", t_temp);
+    for(i=0; i<4; i++){
+        fprintf(ofp, "%lf ", T[i]);
+        fprintf(ofp, "%lf ", age[i]);
     }
 }
