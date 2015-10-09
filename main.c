@@ -2,7 +2,7 @@
 //  thermalSimulation.c
 //  ECE 353 Lab 1
 //  10/7/15
-////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////// /////////////////////////////////
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -246,6 +246,7 @@ int main(int argc, char *argv[]){
     double *T;
     T = initializeT();
     
+    
     //step through updating the temperature
     int i;
     int j=0;
@@ -254,8 +255,11 @@ int main(int argc, char *argv[]){
         printf("\n\nstep %i:\n", j);
         printf("\ntime: %lf\n", t);
         T = rk(&calculatedTdt, h, t, T, 5);
+        double* aP = (double *) malloc(4*sizeof(double)); //age pointer...
+        aP = ageRate(t, T);
+        double *age = rk(&ageRate, h, t, aP, 4);
         for(i=0; i<4; i++){
-            printf("T%i: %lf\n", i, T[i]); 
+            printf("T%i: %lf\nAge: %lf\n", i, T[i], age[i]);
         }
         t+=h;
         j++;
