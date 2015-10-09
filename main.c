@@ -2,7 +2,7 @@
 //  thermalSimulation.c
 //  ECE 353 Lab 1
 //  10/7/15
-/////////////////////////////////////////////////////// /////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,7 +10,7 @@
 #include <assert.h>
 #include <string.h>
 
-/////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
 
 //globals we'll need
 double **thermalParam;
@@ -25,7 +25,7 @@ double ambientR;
 
 //Runge-Kutta Algorithm
 //This has been modified to solve a system of functions y1(t+h), y2(t+h), ... yn(t+h) given f(y,t)=y' as an input
-//n denotes how many functions are in the system
+//n denotes how many functions are in the system; precision of the rk function
 
 double* rk(double* (*f)(double, double*), double h, double t, double *y, int n){
     //k is a 4xn array storying (k10, k11,...k1n),(k20,...k2n)...(k40...k4n)
@@ -242,8 +242,8 @@ int main(int argc, char *argv[]){
     //T holds the temperatures. cores 0-3 are T[0]-T[3], T[4] is ambient
     double *T;
     T = initializeT();
-    double* aP = (double *) malloc(4*sizeof(double)); //age pointer...
 
+    double* aP = (double *) malloc(4*sizeof(double)); //age pointer...
     double t = 0;
     double endTime = powerTrace[powerTraceLength-1][0];
     
@@ -251,8 +251,8 @@ int main(int argc, char *argv[]){
     int i;
     int j=0;
     while (t<=endTime){
-        printf("\n\nstep %i:\n", j);
-        printf("\ntime: %lf\n", t);
+        printf("\n\nStep %i:\n", j);
+        printf("\nTime: %lf\n", t);
         T = rk(&calculatedTdt, h, t, T, 5);
         aP = ageRate(t, T);
         double *age = rk(&ageRate, h, t, aP, 4);
