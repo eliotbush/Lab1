@@ -198,10 +198,11 @@ double* ageRate(double t, double *temps){
 ///////////////////////////////////////////////////////////////////////////
 int main(int argc, char *argv[]){
 
-	double h = 0.005; //step size parameter to be passed into rk
-	double t = 0;
-        
+    //verify that the correct number of arguments were passed
+    assert(argc==5 || argc==4);
 
+    double h = 0.005; //step size parameter to be passed into rk
+    double t = 0;
 
     
     //thermal paramaters file
@@ -234,23 +235,30 @@ int main(int argc, char *argv[]){
     
     //number of rows in each input file
     int thermalParamLength=row_count(tpfp);
+    //verify that the thermal parameter file is the correct length
+    assert(thermalParamLength==6);
     powerTraceLength=row_count(ptfp);
     
     //read the files into pointer arrays for thermal param and power trace
     thermalParam = fileArray(tpfp, thermalParamLength, 4);
     powerTrace = fileArray(ptfp, powerTraceLength, 5);
+
+    int i;
+    int j;
+    //verify that none of the thermal parameters less than or equal to zero, which isn't possible
+    for(i=0; i<thermalParamLength; i++){
+        for(j=0; j<4; j++){assert(thermalParam[i][j]>0);}
+    }
     
     //T holds the temperatures. cores 0-3 are T[0]-T[3], T[4] is ambient
     double *T;
     T = initializeT();
     
-    int i;
     double* aP = (double *) malloc(4*sizeof(double)); //age pointer...
     for(i=0; i<4; i++){aP[i] = 1;}
     double* age;
     
     //step through updating the temperature
-    int j=0;
     //counts how many timesteps are taken in each entry of powerTrace
     int counter;
     //placeholder variable for t (used in output)
@@ -259,8 +267,12 @@ int main(int argc, char *argv[]){
         counter=0;
 	while(t<(powerTrace[j][0]-h/2)){
             T = rk(&calculatedTdt, h, t, T, 5);
+            //verify that none of the temperatures are below ambient (this can't happen)
+            for(i=0; i<4; i++){assert(T[i]>=T[4]);}
             aP = ageRate(t, T);
             age = rk(&ageRate, h, t, aP, 4);
+            //verify that none of the effective ages are less than 1
+	    for(i=0; i<4; i++){assert(age[i]>=1);}
 	    counter++;
             t+=h;
 	}
