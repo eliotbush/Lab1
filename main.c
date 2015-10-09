@@ -18,8 +18,7 @@ double **powerTrace;
 int powerTraceLength;
 double ambientTemp;
 //equivalent resistance between the cores and ambient. this may need to be an array, need to ask Krishna about it
-double h = 0.005; //step size parameter to be passed into rk
-
+double ambientR;
 /////////////////////////////////////////////////////////////////////////////////////
 
 //Runge-Kutta Algorithm
@@ -184,16 +183,14 @@ double* ageRate(double t, double *temps){
     a = (double *) malloc(4*sizeof(double));
     double *b;
     b = (double *) malloc(4*sizeof(double));
-    double *c;
-    c = (double *) malloc(4*sizeof(double));
     for(i=0; i<4; i++){
         a[i] = (double) -E_a/(K_b*temps[i]); //temperature as a dependent variable
         a[i] = exp(a[i]); //intermediate step defining the aging effect at device temperature
         b[i] = (double) -E_a/(K_b* ambientTemp); // Ambient temperature
         b[i] = exp(b[i]); //intermediate step defining the aging effect at ambient
-        c[i] = a[i]/b[i]; //the age rate the device
+        ageDiff[i] = a[i]/b[i]; //the age rate the device
     }
-    return c;
+    return ageDiff;
 }
 ///////////////////////////////////////////////////////////////////////////
 int main(int argc, char *argv[]){
@@ -243,10 +240,10 @@ int main(int argc, char *argv[]){
     //T holds the temperatures. cores 0-3 are T[0]-T[3], T[4] is ambient
     double *T;
     T = initializeT();
-
+    
+    int i;
     double* aP = (double *) malloc(4*sizeof(double)); //age pointer...
-    double t = 0;
-    double endTime = powerTrace[powerTraceLength-1][0];
+    for(i=0; i<4; i++){aP[i] = 1;}
     
     //step through updating the temperature
     int j=0;
@@ -258,7 +255,7 @@ int main(int argc, char *argv[]){
         aP = ageRate(t, T);
         double *age = rk(&ageRate, h, t, aP, 4);
         for(i=0; i<4; i++){
-            printf("T%i: %lf\nAge: %lf\n", i, T[i], age[i]);
+            printf("T%i: %lf\nA%i: %lf\n", i, T[i], i, age[i]);
         }
         t+=h;
         j++;
