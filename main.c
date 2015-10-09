@@ -16,10 +16,10 @@
 double **thermalParam;
 double **powerTrace;
 int powerTraceLength;
+int thermalParamLength;
 double ambientTemp;
 //equivalent resistance between the cores and ambient. this may need to be an array, need to ask Krishna about it
 double ambientR;
-double h = 0.005; //step size parameter to be passed into rk
 
 /////////////////////////////////////////////////////////////////////////////////////
 
@@ -140,7 +140,7 @@ double* calculatedTdt(double t, double *temps){
 	dTdt = (double *) malloc(5*sizeof(double));
 	int i;
 	//initialize dT/dt as 0 for all i
-	for(i=0; i<5; i++){dTdt[0]=0.0;}
+	for(i=0; i<5; i++){dTdt[i]=0.0;}
 
 	//work out which entry in the power trace we're currently on
 	//go through the power trace until the time entry in the trace exceeds the current time and save which step it's after
@@ -181,29 +181,24 @@ double* ageRate(double t, double *temps){
     ageDiff = (double *) malloc(4*sizeof(double));
     double E_a = 0.8; //Activation Energy
     double K_b = 8.617E-5; //Boltzmann's constant
-    double *a;
-    a = (double *) malloc(4*sizeof(double));
-    double *b;
-    b = (double *) malloc(4*sizeof(double));
-    double *c;
-    c = (double *) malloc(4*sizeof(double));
+    double *agingFactorDevice;
+    agingFactorDevice = (double *) malloc(4*sizeof(double));
+    double *agingFactorAmbient;
+    agingFactorAmbient= (double *) malloc(4*sizeof(double));
     for(i=0; i<4; i++){
-        a[i] = (double) -E_a/(K_b)*temps[i]; //temperature as a dependent variable
-        a[i] = exp(a[i]); //intermediate step defining the aging effect at device temperature
-        b[i] = (double) -E_a/(K_b* 300); // Ambient temperature
-        b[i] = exp(b[i]); //intermediate step defining the aging effect at ambient
-        c[i] = a[i]/b[i]; //the age rate the device
+        agingFactorDevice[i] = (double) -E_a/(K_b)*temps[i]; //temperature as a dependent variable
+        agingFactorDevice[i] = exp(agingFactorDevice[i]); //intermediate step defining the aging effect at device temperature
+        agingFactorAmbient[i] = (double) -E_a/(K_b* 300); // Ambient temperature
+        agingFactorAmbient[i] = exp(agingFactorAmbient[i]); //intermediate step defining the aging effect at ambient
+        ageDiff[i] = agingFactorDevice[i]/agingFactorAmbient[i]; //the age rate the device
     }
-    return c;
+    return ageDiff;
 }
 ///////////////////////////////////////////////////////////////////////////
 int main(int argc, char *argv[]){
 
 	double h = 0.005; //step size parameter to be passed into rk
-	double t = 0;
-        
-
-
+    
     
     //thermal paramaters file
     FILE *tpfp;
@@ -235,8 +230,10 @@ int main(int argc, char *argv[]){
     assert(ofp != NULL);
     
     //number of rows in each input file
-    int thermalParamLength=row_count(tpfp);
-    powerTraceLength=row_count(ptfp);
+    thermalParamLength = row_count(tpfp);
+    printf("%d\n", thermalParamLength);
+    powerTraceLength = row_count(ptfp);
+    printf("%d\n", powerTraceLength);
     
     //read the files into pointer arrays for thermal param and power trace
     thermalParam = fileArray(tpfp, thermalParamLength, 4);
@@ -245,21 +242,22 @@ int main(int argc, char *argv[]){
     //T holds the temperatures. cores 0-3 are T[0]-T[3], T[4] is ambient
     double *T;
     T = initializeT();
-    
+    double* aP = (double *) malloc(4*sizeof(double)); //age pointer...
+
+    double t = 0;
+    double endTime = powerTrace[powerTraceLength-1][0];
     
     //step through updating the temperature
     int i;
     int j=0;
-    double endTime = 3;
     while (t<=endTime){
         printf("\n\nstep %i:\n", j);
         printf("\ntime: %lf\n", t);
         T = rk(&calculatedTdt, h, t, T, 5);
-        double* aP = (double *) malloc(4*sizeof(double)); //age pointer...
         aP = ageRate(t, T);
         double *age = rk(&ageRate, h, t, aP, 4);
         for(i=0; i<4; i++){
-            printf("T%i: %lf\nAge: %lf\n", i, T[i], age[i]);
+            printf("T%i: %lf\nA%i: %lf\n", i, T[i], i, age[i]);
         }
         t+=h;
         j++;
