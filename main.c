@@ -1,7 +1,7 @@
 //  Emma Bryce - Eliot Bush - Ygor Jean
 //  thermalSimulation.c
 //  ECE 353 Lab 1
-//  10/9/15
+//  10/7/15
 /////////////////////////////////////////////////////// /////////////////////////////////
 
 #include <stdio.h>
@@ -147,7 +147,7 @@ double* calculatedTdt(double t, double *temps){
 	i=0;
 	while (i<powerTraceLength){
 		if (powerTrace[i][0]>t){
-			step = i-1;
+			step = i;
 			i = powerTraceLength;
 		}
 		else{i++;}
@@ -255,10 +255,9 @@ int main(int argc, char *argv[]){
     int counter;
     //placeholder variable for t (used in output)
     double t_temp;
-    for(j=0; j<(powerTraceLength-1); j++){
-        t_temp = t;
+    for(j=0; j<(powerTraceLength); j++){
         counter=0;
-	while(t<powerTrace[j+1][0]){
+	while(t<(powerTrace[j][0]-h/2)){
             T = rk(&calculatedTdt, h, t, T, 5);
             aP = ageRate(t, T);
             age = rk(&ageRate, h, t, aP, 4);
@@ -267,25 +266,11 @@ int main(int argc, char *argv[]){
 	}
 
 	//file output stuff
-        fprintf(ofp, "%lf ", t_temp);
+        fprintf(ofp, "%lf ", t);
 	for(i=0; i<4; i++){
             fprintf(ofp, "%lf ", T[i]);
             fprintf(ofp, "%lf ", age[i]);
         }
 	fprintf(ofp, "\r\n");
-    }
-
-    //do one last walkthrough for the last entry of powerTrace
-    t_temp=t;
-    for(j=0; j<counter; j++){
-        T = rk(&calculatedTdt, h, t, T, 5);
-        aP = ageRate(t, T);
-        age = rk(&ageRate, h, t, aP, 4);
-        t+=h;
-    }
-    fprintf(ofp, "%lf ", t_temp);
-    for(i=0; i<4; i++){
-        fprintf(ofp, "%lf ", T[i]);
-        fprintf(ofp, "%lf ", age[i]);
     }
 }
